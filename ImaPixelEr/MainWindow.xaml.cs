@@ -1,38 +1,27 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ImaPixelEr
 {
-    /// <summary>
-    /// Lógica de interacción para MainWindow.xaml
-    /// </summary>
-    public static class WriteableBitmapExtentions
+	public static class WriteableBitmapExtentions
     {
         // Save the WriteableBitmap into a PNG file.
-        public static void Save(this WriteableBitmap wbitmap,
-            string filename)
+        public static void Save(this WriteableBitmap wbitmap, string filename)
         {
             // Save the bitmap into a file.
-            using (FileStream stream =
-                new FileStream(filename, FileMode.Create))
+            using (FileStream stream = new FileStream(filename, FileMode.Create))
             {
+                // Initialize a PngBitmapEncoder (encoder)
                 PngBitmapEncoder encoder = new PngBitmapEncoder();
+                // Create and add a bitmapframe to (encoder)
                 encoder.Frames.Add(BitmapFrame.Create(wbitmap));
+                // Save the stream
                 encoder.Save(stream);
             }
         }
@@ -43,53 +32,6 @@ namespace ImaPixelEr
         {
             InitializeComponent();
         }
-        private void UpdateGrid()
-		{
-            canvas_ug.Children.Clear();
-            canvas_ug.Rows = rows;
-            canvas_ug.Columns = cols;
-            canvas_ug.Width = image_img.Width;
-            canvas_ug.Height = image_img.Height;
-            for (int i = 0; i < (rows * cols); i++)
-            {
-                Border pixel = new Border
-                {
-                    BorderThickness = new Thickness(1),
-                    BorderBrush = Brushes.Black,
-                    Background = new SolidColorBrush(Colors.Transparent),
-                    Width = image_img.Width / cols,
-                    Height = image_img.Height / rows
-                };
-                pixel.MouseLeftButtonDown += Pixel_Click;
-                pixel.MouseEnter += Pixel_Enter;
-                pixel.MouseWheel += Pixel_MouseWheel;
-                pixel.MouseMove += Pixel_Move;
-                canvas_ug.Children.Add(pixel);
-            }
-        }
-        private void Load_img_btn_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.InitialDirectory = "c:\\";
-            dlg.Filter = "Image Files|*.jpeg;*.png;*.jpg;*.gif;*.bmp|All Files (*.*)|*.*";
-            dlg.RestoreDirectory = true;
-
-            if (dlg.ShowDialog() == true)
-            {
-                string selectedFileName = dlg.FileName;
-                file_txt.Text = selectedFileName;
-                bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(selectedFileName);
-                bitmap.EndInit();
-                image_img.Source = bitmap;
-                image_img.Width = bitmap.Width;
-                image_img.Height = bitmap.Height;
-                image_loaded = true;
-
-                UpdateGrid();
-            }
-        }
         private BitmapImage bitmap;
         private bool image_loaded = false;
         private SolidColorBrush selectedColor;
@@ -98,6 +40,85 @@ namespace ImaPixelEr
         private int rows = 16;
         private int cols = 16;
         private int tool = 0;
+        // Upgrade grid size from rows and cols vars
+        private void UpdateGrid()
+		{
+            // Clean the grid
+            canvas_ug.Children.Clear();
+            // Set the rows count
+            canvas_ug.Rows = rows;
+            // Set the columns count
+            canvas_ug.Columns = cols;
+            // Set canvas size with image size
+            canvas_ug.Width = image_img.Width;
+            canvas_ug.Height = image_img.Height;
+            // Loop from 0 to the rows * cols value
+            for (int i = 0; i < (rows * cols); i++)
+            {
+                // Create a border(pixel) to draw pixel
+                Border pixel = new Border
+                {
+                    // Set pixel's border thickness
+                    BorderThickness = new Thickness(1),
+                    // Set pixel's color
+                    BorderBrush = Brushes.Black,
+                    // Set pixel's background
+                    Background = new SolidColorBrush(Colors.Transparent),
+                    // Set pixel's width, it's image width / columns
+                    Width = image_img.Width / cols,
+                    // Set pixel's height, it's image height / rows
+                    Height = image_img.Height / rows
+                };
+                // Add left click event to the pixel
+                pixel.MouseLeftButtonDown += Pixel_Click;
+                // Add mouse enter event to the pixel
+                pixel.MouseEnter += Pixel_Enter;
+                // Add mouse wheel event to the pixel
+                pixel.MouseWheel += Pixel_MouseWheel;
+                // Add mouse move event to pixel
+                pixel.MouseMove += Pixel_Move;
+                // Add pixel to the grid
+                canvas_ug.Children.Add(pixel);
+            }
+        }
+        // Load image button
+        private void Load_img_btn_Click(object sender, RoutedEventArgs e)
+        {
+            // Create a OpenFileDialog
+            OpenFileDialog dlg = new OpenFileDialog();
+            // Set default directory
+            dlg.InitialDirectory = "c:\\";
+            // Set filter
+            dlg.Filter = "Image Files|*.jpeg;*.png;*.jpg;*.gif;*.bmp|All Files (*.*)|*.*";
+            // Enable restore directory
+            dlg.RestoreDirectory = true;
+            // If the dialog got an OK
+            if (dlg.ShowDialog() == true)
+            {
+                // Get the filename
+                string selectedFileName = dlg.FileName;
+                // Put the filename on the textbox
+                file_txt.Text = selectedFileName;
+                // Create a bitmap image
+                bitmap = new BitmapImage();
+                // Init the bitmap image
+                bitmap.BeginInit();
+                // Set uri source to the file
+                bitmap.UriSource = new Uri(selectedFileName);
+                // End the bitmap image
+                bitmap.EndInit();
+                // Set the image source to the loaded image
+                image_img.Source = bitmap;
+                // Set the image size from the loaded image
+                image_img.Width = bitmap.Width;
+                image_img.Height = bitmap.Height;
+                // Flag image_loaded true
+                image_loaded = true;
+                // Update the grid
+                UpdateGrid();
+            }
+        }
+        
         private void Update_btn_Click(object sender, RoutedEventArgs e)
         {
             if (image_loaded)

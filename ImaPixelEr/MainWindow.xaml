@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ImaPixelEr"
         xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="608.5" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="#FF21232F">
+        Title="ImaPixelEr" Height="400" Width="608.5" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="#FF21232F">
     <Grid>
         <Grid Margin="10">
             <Grid>
